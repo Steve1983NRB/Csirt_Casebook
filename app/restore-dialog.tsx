@@ -1,0 +1,12 @@
+'use client';
+import {useState} from 'react';
+import {Upload,ShieldCheck} from 'lucide-react';
+import {Button} from '@/components/ui/button';
+import {Input} from '@/components/ui/input';
+import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogDescription,DialogFooter} from '@/components/ui/dialog';
+import {parseArchive,MAX_ARCHIVE} from '@/lib/archive';
+export default function RestoreDialog({onClose,onRestored}:{onClose:()=>void;onRestored:(id:string)=>void}){const [file,setFile]=useState<File|null>(null),[preview,setPreview]=useState<any>(null),[error,setError]=useState(''),[busy,setBusy]=useState(false);
+ async function inspect(f?:File){setFile(null);setPreview(null);setError('');if(!f)return;setBusy(true);try{if(f.size>MAX_ARCHIVE)throw new Error('The archive must be 16 MB or smaller.');const a=await parseArchive(new Uint8Array(await f.arrayBuffer()));setFile(f);setPreview({title:a.caseData.title,reference:a.caseData.reference,records:a.records.length,images:a.images.length})}catch(e:any){setError(e.message)}finally{setBusy(false)}}
+ async function restore(){if(!file)return;setBusy(true);try{const r=await fetch('/api/cases/restore',{method:'POST',headers:{'Content-Type':'application/zip'},body:file}),data:any=await r.json();if(!r.ok)throw new Error(data.error);onRestored(data.id)}catch(e:any){setError(e.message)}finally{setBusy(false)}}
+ return <Dialog open onOpenChange={v=>!v&&!busy&&onClose()}><DialogContent><DialogHeader><DialogTitle>Restore an investigation</DialogTitle><DialogDescription>Import a CSIRT Investigate ZIP archive as a new case. The original case stays unchanged. Access starts with you as the owner.</DialogDescription></DialogHeader><Input type="file" accept=".zip,application/zip" aria-label="Case archive" disabled={busy} onChange={e=>inspect(e.target.files?.[0])}/><p className="meta">Maximum 16 MB. Screenshot hashes and record relationships are checked before restoration. Word report files and case memberships are not imported.</p>{preview&&<div className="restore-preview"><ShieldCheck className="green"/><div><b>{preview.reference} · {preview.title}</b><p>{preview.records} records · {preview.images} verified screenshots</p></div></div>}{error&&<div className="error" role="alert">{error}</div>}<DialogFooter><Button variant="outline" disabled={busy} onClick={onClose}>Cancel</Button><Button disabled={!preview||busy} onClick={restore}><Upload/>{busy?'Checking…':'Restore as new case'}</Button></DialogFooter></DialogContent></Dialog>
+}

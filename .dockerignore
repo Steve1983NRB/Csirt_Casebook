@@ -1,0 +1,15 @@
+node_modules
+.next
+.vinext
+.wrangler
+.sites-runtime
+.vscode
+.openai/*.log
+dist
+.dev.vars
+.env*
+*.pem
+*.tsbuildinfo
+tests
+.git
+docker/ca/*.pem

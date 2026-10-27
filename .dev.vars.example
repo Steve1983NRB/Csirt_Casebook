@@ -1,0 +1,23 @@
+# SOCradar Premium Feeds API
+# Create a local .dev.vars copy and replace the value below with the API key
+# from Settings > API & Integrations > API Options > Premium Feeds API.
+SOCRADAR_PREMIUM_FEEDS_API_KEY=replace_with_your_socradar_api_key
+
+SOCRADAR_COMPANY_ID=replace_with_your_socradar_company_id
+
+# Free Auth-Key from https://auth.abuse.ch/ for ThreatFox, URLhaus and MalwareBazaar.
+ABUSECH_AUTH_KEY=replace_with_your_abusech_auth_key
+
+# Read-only MISP REST API (public HTTPS endpoint, port 443) credentials.
+MISP_API_ROOT=
+MISP_API_KEY=replace_with_your_read_only_misp_api_key
+
+
+
+
+
+
+
+# Generate a private random token of at least 32 characters for first-admin setup.
+# This placeholder is intentionally invalid; replace it before local registration.
+INITIAL_ADMIN_TOKEN=replace_with_a_random_token_of_at_least_32_characters

@@ -1,0 +1,5 @@
+MITRE ATLAS data is ©2021-2026 The MITRE Corporation.
+Approved for Public Release; Distribution Unlimited. Public Release Case Numbers 21-2363, 26-1162.
+Source: https://github.com/mitre-atlas/atlas-data
+Data version: 2026.09
+Source SHA-256: 935efa93e28294432d3e2f537eb94991ef8d1f8c58341cd360ea3321ddb66688

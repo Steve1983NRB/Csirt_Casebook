@@ -1,0 +1,32 @@
+services:
+  casebook:
+    build:
+      context: .
+      args:
+        NODE_IMAGE: ${NODE_IMAGE:-node:22-bookworm-slim}
+    image: csirt-investigate:local
+    restart: unless-stopped
+    ports:
+      # Bound to this machine only. Put a TLS reverse proxy in front before exposing it further.
+      - "127.0.0.1:${CASEBOOK_PORT:-5173}:5173"
+    environment:
+      # Optional. When empty, a random token is generated once and kept in the data volume.
+      INITIAL_ADMIN_TOKEN: ${INITIAL_ADMIN_TOKEN:-}
+      SOCRADAR_PREMIUM_FEEDS_API_KEY: ${SOCRADAR_PREMIUM_FEEDS_API_KEY:-}
+      SOCRADAR_COMPANY_ID: ${SOCRADAR_COMPANY_ID:-}
+      SOCRADAR_API_ROOT: ${SOCRADAR_API_ROOT:-}
+      ABUSECH_AUTH_KEY: ${ABUSECH_AUTH_KEY:-}
+      MISP_API_ROOT: ${MISP_API_ROOT:-}
+      MISP_API_KEY: ${MISP_API_KEY:-}
+      # Optional OpenCTI / TAXII 2.1 pull client: use a bearer token or username + password, not both.
+      TAXII_API_ROOT: ${TAXII_API_ROOT:-}
+      TAXII_TOKEN: ${TAXII_TOKEN:-}
+      TAXII_USERNAME: ${TAXII_USERNAME:-}
+      TAXII_PASSWORD: ${TAXII_PASSWORD:-}
+    volumes:
+      - casebook-data:/data
+      # Optional: put corporate proxy root certificates (*.pem) in docker/ca/ if feeds fail with TLS errors.
+      - ./docker/ca:/certs:ro
+
+volumes:
+  casebook-data:

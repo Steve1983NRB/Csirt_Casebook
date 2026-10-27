@@ -1,0 +1,4 @@
+import {env} from 'cloudflare:workers';
+import {guard,database,HttpError} from '@/lib/server';
+import {access} from '@/lib/access';
+export async function GET(req:Request,ctx:{params:Promise<{id:string}>}){return guard(req,async()=>{const id=(await ctx.params).id,r:any=await database().prepare('SELECT * FROM reports WHERE id=?').bind(id).first();if(!r)throw new HttpError(404,'Report not found.');await access(req,r.case_id,'read');const source=new URL(req.url).searchParams.get('source')==='1',object=await env.BUCKET?.get(id+(source?'.json':''));if(!object)throw new HttpError(503,'The archived report is unavailable.');return new Response(object.body,{headers:{'Content-Type':source?'application/json':'application/vnd.openxmlformats-officedocument.wordprocessingml.document','Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff','Content-Disposition':`attachment; filename="${source?'report_source.json':r.name.replace(/["\r\n]/g,'_')}"`}})})}
